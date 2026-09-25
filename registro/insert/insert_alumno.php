@@ -10,8 +10,8 @@ $domicilio = $_POST['domicilio'];
 $telefono = $_POST['telefono'];
 $email = $_POST['email'];
 
-$sql = "INSERT INTO alumnos
-(matricula_al, nombre_al, apaterno_al, amaterno_al, dom_al, tel_al, mail_al)
+$sql = "INSERT INTO alumno
+(matricula_al, nombre, apaterno, amaterno, domicilio, telefono, email)
 VALUES
 ('$matricula', '$nombre', '$apaterno', '$amaterno', '$domicilio', '$telefono', '$email')";
 

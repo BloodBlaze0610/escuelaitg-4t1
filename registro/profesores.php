@@ -38,6 +38,7 @@
         </div>
 
         <!-- Nombre -->
+
         <div class="mb-3">
             <label class="form-label">Nombre</label>
 
@@ -50,6 +51,7 @@
         </div>
 
         <!-- Apellido paterno -->
+
         <div class="mb-3">
             <label class="form-label">Apellido Paterno</label>
 
@@ -62,6 +64,7 @@
         </div>
 
         <!-- Apellido materno -->
+
         <div class="mb-3">
             <label class="form-label">Apellido Materno</label>
 
@@ -74,6 +77,7 @@
         </div>
 
         <!-- Domicilio -->
+
         <div class="mb-3">
             <label class="form-label">Domicilio</label>
 
@@ -98,6 +102,7 @@
         </div>
 
         <!-- Teléfono -->
+
         <div class="mb-3">
             <label class="form-label">Teléfono</label>
 
@@ -107,6 +112,7 @@
                    placeholder="Ingresa el teléfono"
                    maxlength="35"
                    required>
+
         </div>
 
         <div class="text-center">

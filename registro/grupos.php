@@ -23,17 +23,15 @@
 
     <h1 class="text-center mb-4">Registro de Grupos</h1>
 
-    <form action="insert/insert_grupo.php" method="POST">
+    <form action="../proceso/procesar_grupo.php" method="POST">
 
         <div class="mb-3">
-            <label class="form-label">Descripción del Grupo</label>
+            <label class="form-label">Descripción</label>
 
             <input type="text"
-                   name="descripcion_grupo"
+                   name="descripcion"
                    class="form-control"
-                   placeholder="Ingresa la descripción del grupo"
-                   maxlength="15"
-                   required>
+                   placeholder="Ingresa la descripción del grupo">
         </div>
 
         <div class="text-center">
