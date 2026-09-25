@@ -8,6 +8,7 @@
 
     <title>Registro de Materias</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
@@ -22,15 +23,17 @@
 
     <h1 class="text-center mb-4">Registro de Materias</h1>
 
-    <form action="../proceso/procesar_materias.php" method="POST">
+    <form action="insert/insert_materia.php" method="POST">
 
         <div class="mb-3">
-            <label class="form-label">Descripción</label>
+            <label class="form-label">Descripción de la Materia</label>
 
             <input type="text"
-                   name="descripcion"
+                   name="descripcion_mat"
                    class="form-control"
-                   placeholder="Ingresa la descripción de la materia">
+                   placeholder="Ingresa la materia"
+                   maxlength="25"
+                   required>
         </div>
 
         <div class="text-center">

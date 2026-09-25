@@ -8,6 +8,7 @@
 
     <title>Registro de Grupos</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
@@ -22,15 +23,17 @@
 
     <h1 class="text-center mb-4">Registro de Grupos</h1>
 
-    <form action="../proceso/procesar_grupos.php" method="POST">
+    <form action="insert/insert_grupo.php" method="POST">
 
         <div class="mb-3">
-            <label class="form-label">Descripción</label>
+            <label class="form-label">Descripción del Grupo</label>
 
             <input type="text"
-                   name="descripcion"
+                   name="descripcion_grupo"
                    class="form-control"
-                   placeholder="Ingresa la descripción del grupo">
+                   placeholder="Ingresa la descripción del grupo"
+                   maxlength="15"
+                   required>
         </div>
 
         <div class="text-center">
