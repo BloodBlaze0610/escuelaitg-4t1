@@ -3,21 +3,24 @@
 include("../../conexion.php");
 
 $matricula = $_POST['matricula_al'];
-$nombre = $_POST['nombre'];
-$apaterno = $_POST['apaterno'];
-$amaterno = $_POST['amaterno'];
-$domicilio = $_POST['domicilio'];
-$telefono = $_POST['telefono'];
-$email = $_POST['email'];
+$nombre = $_POST['nombre_al'];
+$apaterno = $_POST['apaterno_al'];
+$amaterno = $_POST['amaterno_al'];
+$domicilio = $_POST['dom_al'];
+$telefono = $_POST['tel_al'];
+$email = $_POST['mail_al'];
 
-$sql = "INSERT INTO alumno
-(matricula_al, nombre, apaterno, amaterno, domicilio, telefono, email)
+$sql = "INSERT INTO alumnos
+(matricula_al, nombre_al, apaterno_al, amaterno_al, dom_al, tel_al, mail_al)
 VALUES
 ('$matricula', '$nombre', '$apaterno', '$amaterno', '$domicilio', '$telefono', '$email')";
 
 if ($conexion->query($sql) === TRUE) {
 
-    echo "Alumno registrado correctamente";
+    echo "<script>
+            alert('Alumno registrado correctamente');
+            window.location.href='../../catalogos/crud/crudalumnos.php';
+          </script>";
 
 } else {
 
@@ -28,3 +31,4 @@ if ($conexion->query($sql) === TRUE) {
 $conexion->close();
 
 ?>
+```

@@ -1,3 +1,25 @@
+<?php
+
+include("../conexion.php");
+
+$descripcion = $_GET["descripcion"];
+
+$resultado = $conexion->query(
+    "SELECT descripcion_grupo 
+     FROM grupo 
+     WHERE descripcion_grupo = '$descripcion'"
+);
+
+if (!$resultado || $resultado->num_rows == 0) {
+
+    die("Grupo no encontrado");
+
+}
+
+$grupo = $resultado->fetch_assoc();
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -6,7 +28,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Registro de Materias</title>
+    <title>Modificar Grupo</title>
 
     <!-- Bootstrap -->
 
@@ -29,7 +51,7 @@
     </div>
 
 
-    <!-- Barra de navegación -->
+    <!-- Barra azul -->
 
     <nav class="navbar navbar-expand-lg navbar-dark"
          style="background-color: #4285d4;">
@@ -43,7 +65,7 @@
             <div class="navbar-nav">
 
                 <a class="nav-link active"
-                   href="../catalogos/crud/crudmaterias.php">
+                   href="../catalogos/crud/crudgrupos.php">
                     Catálogos
                 </a>
 
@@ -67,22 +89,30 @@
     <div class="container mt-5">
 
         <h4 class="text-center text-secondary mb-4">
-            Registro de Materias
+            Modificar Grupo
         </h4>
 
 
-        <form action="../proceso/procesar_materia.php" method="POST">
+        <form action="procesar_modif_grupo.php" method="POST">
+
+
+            <!-- Descripción actual -->
+
+            <input type="hidden"
+                   name="descripcion_actual"
+                   value="<?php echo htmlspecialchars($grupo["descripcion_grupo"]); ?>">
+
 
             <div class="mb-3">
 
                 <label class="form-label">
-                    Descripción de la materia
+                    Descripción del grupo
                 </label>
 
                 <input type="text"
-                       name="descripcion_mat"
+                       name="descripcion_nueva"
                        class="form-control"
-                       placeholder="Ingresa la materia"
+                       value="<?php echo htmlspecialchars($grupo["descripcion_grupo"]); ?>"
                        required>
 
             </div>
@@ -91,11 +121,11 @@
             <div class="text-center">
 
                 <button type="submit"
-                        class="btn btn-success">
-                    Guardar Materia
+                        class="btn btn-primary">
+                    Guardar Cambios
                 </button>
 
-                <a href="../catalogos/crud/crudmaterias.php"
+                <a href="../catalogos/crud/crudgrupos.php"
                    class="btn btn-secondary">
                     Cancelar
                 </a>

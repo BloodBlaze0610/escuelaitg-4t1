@@ -13,40 +13,100 @@
 
 </head>
 
-<body>
+<body class="bg-light">
 
-<div class="container mt-5">
+    <!-- Título superior -->
 
-    <div class="alert alert-warning text-center">
-        <h2>Sistema Escolar</h2>
+    <div class="container-fluid bg-white text-center py-3">
+
+        <h4 class="text-secondary">
+            Sistema Escolar
+        </h4>
+
     </div>
 
-    <h1 class="text-center mb-4">Registro de Grupos</h1>
 
-    <form action="../proceso/procesar_grupo.php" method="POST">
+    <!-- Barra de navegación -->
 
-        <div class="mb-3">
-            <label class="form-label">Descripción</label>
+    <nav class="navbar navbar-expand-lg navbar-dark"
+         style="background-color: #4285d4;">
 
-            <input type="text"
-                   name="descripcion"
-                   class="form-control"
-                   placeholder="Ingresa la descripción del grupo">
+        <div class="container-fluid">
+
+            <a class="navbar-brand" href="#">
+                Navbar
+            </a>
+
+            <div class="navbar-nav">
+
+                <a class="nav-link active"
+                   href="../catalogos/crud/crudgrupos.php">
+                    Catálogos
+                </a>
+
+                <a class="nav-link" href="#">
+                    Procesos
+                </a>
+
+                <a class="nav-link" href="#">
+                    Reportes
+                </a>
+
+            </div>
+
         </div>
 
-        <div class="text-center">
+    </nav>
 
-            <button type="submit" class="btn btn-primary">
-                Guardar Grupo
-            </button>
 
-        </div>
+    <!-- Formulario -->
 
-    </form>
+    <div class="container mt-5">
 
-</div>
+        <h4 class="text-center text-secondary mb-4">
+            Registro de Grupos
+        </h4>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <form action="../proceso/procesar_grupo.php" method="POST">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Descripción
+                </label>
+
+                <input type="text"
+                       name="descripcion"
+                       class="form-control"
+                       placeholder="Ingresa la descripción del grupo"
+                       required>
+
+            </div>
+
+
+            <div class="text-center">
+
+                <button type="submit"
+                        class="btn btn-success">
+                    Guardar Grupo
+                </button>
+
+                <a href="../catalogos/crud/crudgrupos.php"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- Bootstrap JavaScript -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
