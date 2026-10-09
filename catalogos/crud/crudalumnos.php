@@ -65,9 +65,15 @@ $alumnos = $resultado->fetch_all(MYSQLI_ASSOC);
 
     </div>
 
-</nav>
+ </nav>
 
-<div class="container mt-5">
+      <div class="container-fluid bg-white text-center py-3">
+        ...
+      </div>
+
+     <nav class="navbar ...
+         ...
+     </nav>
 
     <h4 class="text-center text-secondary mb-4">
         Catálogo de Alumnos
