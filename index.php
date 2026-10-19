@@ -1,3 +1,4 @@
+
 <?php
 
 include("navegacion/header.php");
@@ -17,9 +18,10 @@ include("navegacion/navegacion.php");
 
     <div class="row mt-5">
 
+        <!-- ALUMNOS -->
         <div class="col-md-3 mb-3">
 
-            <div class="card text-center">
+            <div class="card text-center h-100">
 
                 <div class="card-body">
 
@@ -38,10 +40,10 @@ include("navegacion/navegacion.php");
 
         </div>
 
-
+        <!-- GRUPOS -->
         <div class="col-md-3 mb-3">
 
-            <div class="card text-center">
+            <div class="card text-center h-100">
 
                 <div class="card-body">
 
@@ -60,10 +62,10 @@ include("navegacion/navegacion.php");
 
         </div>
 
-
+        <!-- MATERIAS -->
         <div class="col-md-3 mb-3">
 
-            <div class="card text-center">
+            <div class="card text-center h-100">
 
                 <div class="card-body">
 
@@ -82,10 +84,10 @@ include("navegacion/navegacion.php");
 
         </div>
 
-
+        <!-- PROFESORES -->
         <div class="col-md-3 mb-3">
 
-            <div class="card text-center">
+            <div class="card text-center h-100">
 
                 <div class="card-body">
 
@@ -94,6 +96,32 @@ include("navegacion/navegacion.php");
                     </h5>
 
                     <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudprofesores.php"
+                       class="btn btn-primary">
+                        Ver catálogo
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- UNIDADES -->
+        <div class="col-md-3 mb-3">
+
+            <div class="card text-center h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Unidades
+                    </h5>
+
+                    <p class="card-text">
+                        Registro y consulta de unidades.
+                    </p>
+
+                    <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudunidad.php"
                        class="btn btn-primary">
                         Ver catálogo
                     </a>
@@ -113,3 +141,5 @@ include("navegacion/navegacion.php");
 include("navegacion/footer.php");
 
 ?>
+
+            
