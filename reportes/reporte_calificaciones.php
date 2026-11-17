@@ -1,8 +1,15 @@
-
 <?php
+// Si el usuario dio clic en exportar, configuramos las cabeceras para Excel
+if (isset($_GET['exportar']) && $_GET['exportar'] == 'excel') {
+    header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+    header("Content-Disposition: attachment; filename=reporte_calificaciones_" . date('Y-m-d') . ".xls");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+}
+
 include("../conexion.php");
 
-$sql = "SELECT
+$sql = "SELECT 
             capcal.id_capcal,
             capcal.id_alumno,
             alumnos.nombre_al,
@@ -18,6 +25,11 @@ $sql = "SELECT
         ORDER BY alumnos.apaterno_al ASC";
 
 $resultado = $conexion->query($sql);
+
+// Si NO se está exportando, cargamos la barra de navegación web
+if (!isset($_GET['exportar'])) {
+    include("../navegacion/navegacion.php");
+}
 ?>
 
 <!DOCTYPE html>
@@ -61,14 +73,26 @@ $resultado = $conexion->query($sql);
 
 <body>
 
-<?php include("../navegacion/navegacion.php"); ?>
-
 <div class="container contenedor">
 
     <h2 class="text-center mb-4">Reporte de Calificaciones</h2>
 
+    <!-- Botones de acción (seocultan al exportar a Excel) -->
+    <?php if (!isset($_GET['exportar'])) { ?>
+        <div class="text-center mb-4 no-imprimir">
+            <a href="reporte_calificaciones.php?exportar=excel" class="btn btn-success">
+                📊 Exportar a Excel
+            </a>
+
+            <a href="index.php" class="btn btn-secondary">
+                Regresar
+            </a>
+        </div>
+    <?php } ?>
+
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
+        <!-- Agregamos border="1" para que Excel reconozca las celdas -->
+        <table class="table table-bordered table-striped" border="1">
             <thead class="table-primary">
                 <tr>
                     <th>ID</th>
@@ -88,12 +112,12 @@ $resultado = $conexion->query($sql);
                             <td><?php echo htmlspecialchars($fila["id_alumno"]); ?></td>
 
                             <td>
-                                <?php
+                                <?php 
                                 echo htmlspecialchars(
-                                    $fila["nombre_al"] . " " .
-                                    $fila["apaterno_al"] . " " .
+                                    $fila["nombre_al"] . " " . 
+                                    $fila["apaterno_al"] . " " . 
                                     $fila["amaterno_al"]
-                                );
+                                ); 
                                 ?>
                             </td>
 
@@ -113,16 +137,6 @@ $resultado = $conexion->query($sql);
                 <?php } ?>
             </tbody>
         </table>
-    </div>
-
-    <div class="text-center mt-3 no-imprimir">
-        <button onclick="window.print()" class="btn btn-primary">
-            Imprimir reporte
-        </button>
-
-        <a href="../index.php" class="btn btn-secondary">
-            Regresar al inicio
-        </a>
     </div>
 
 </div>

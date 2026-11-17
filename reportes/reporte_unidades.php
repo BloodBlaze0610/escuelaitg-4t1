@@ -1,5 +1,12 @@
-
 <?php
+// Si el usuario dio clic en exportar, configuramos las cabeceras para Excel
+if (isset($_GET['exportar']) && $_GET['exportar'] == 'excel') {
+    header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+    header("Content-Disposition: attachment; filename=reporte_unidades_" . date('Y-m-d') . ".xls");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+}
+
 include("../conexion.php");
 
 $consulta = "SELECT id_unidad, descripcion FROM unidad ORDER BY id_unidad ASC";
@@ -19,19 +26,28 @@ $resultado = $conexion->query($consulta);
 
 <body>
 
-    <?php include("../navegacion/navegacion.php"); ?>
+    <?php 
+    // Si no se está exportando, cargamos la barra de navegación web
+    if (!isset($_GET['exportar'])) { 
+        include("../navegacion/navegacion.php");
+    } 
+    ?>
 
     <div class="container mt-4">
 
         <h2 class="text-center mb-4">Reporte de Unidades</h2>
 
-        <div class="mb-3">
-            <a href="../index.php" class="btn btn-secondary">Regresar al inicio</a>
-            <button onclick="window.print()" class="btn btn-primary">Imprimir reporte</button>
-        </div>
+        <!-- Botones de acción (se ocultan al exportar) -->
+        <?php if (!isset($_GET['exportar'])) { ?>
+            <div class="mb-3">
+                <a href="../index.php" class="btn btn-secondary">Regresar al inicio</a>
+                <a href="reporte_unidades.php?exportar=excel" class="btn btn-success">📊 Exportar a Excel</a>
+            </div>
+        <?php } ?>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+            <!-- Agregamos border="1" para que Excel reconozca las celdas -->
+            <table class="table table-bordered table-striped" border="1">
 
                 <thead class="table-primary">
                     <tr>

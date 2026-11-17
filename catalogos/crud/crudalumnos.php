@@ -1,19 +1,24 @@
-<?php
-
-include("../../conexion.php");
-
-$resultado = $conexion->query(
-    "SELECT matricula_al, nombre_al, apaterno_al, amaterno_al,
-            dom_al, mail_al, tel_al
-     FROM alumnos"
-);
-
-if (!$resultado) {
-    die("Error en la consulta: " . $conexion->error);
+<<?php
+session_start();
+// Si no es Administrador (puesto 1), lo mandamos directo al inicio o login
+if (!isset($_SESSION['puesto']) || $_SESSION['puesto'] != 1) {
+    header("Location: ../../index.php");
+    exit();
 }
 
-$alumnos = $resultado->fetch_all(MYSQLI_ASSOC);
+// 1. Incluimos la conexión a la base de datos
+include("../../conexion.php");
 
+// 2. Realizamos la consulta SQL para obtener los alumnos
+$sql = "SELECT matricula_al, nombre_al, apaterno_al, amaterno_al, dom_al, mail_al, tel_al FROM alumnos";
+$resultado = $conexion->query($sql);
+
+if (!$resultado) {
+    die("Error al consultar los alumnos: " . $conexion->error);
+}
+
+// 3. Guardamos los resultados en un arreglo asociativo para usarlo en el foreach
+$alumnos = $resultado->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>

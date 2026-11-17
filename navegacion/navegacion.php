@@ -1,3 +1,10 @@
+<?php
+// Validamos la sesión si no está iniciada previamente
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$rol = $_SESSION['puesto'] ?? 0;
+?>
 
 <style>
     .dropdown-menu .dropdown-item {
@@ -39,122 +46,131 @@
 
             <ul class="navbar-nav ms-auto">
 
-                <!-- CATALOGOS -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Catálogos
-                    </a>
+                <!-- CATÁLOGOS: Solo visible para Administrador (1) -->
+                <?php if ($rol == 1) { ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Catálogos
+                        </a>
 
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudalumnos.php">Alumnos</a></li>
-                        <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudgrupos.php">Grupos</a></li>
-                        <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudmaterias.php">Materias</a></li>
-                        <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudprofesores.php">Profesores</a></li>
-                        <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudunidad.php">Unidades</a></li>
-                    </ul>
-                </li>
-
-                <!-- PROCESOS -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Procesos
-                    </a>
-
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/proceso/index.php">
-                                Registro de datos
-                            </a>
-                        </li>
-
-                        <li><hr class="dropdown-divider"></li>
-
-                        <li>
-                            <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/inscripcion.php">
-                                Inscripción a Grupos
-                            </a>
-                        </li>
-
-                        <li><hr class="dropdown-divider"></li>
-
-                        <li>
-                            <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudinscripciones.php">
-                                Consultar Inscripciones
-                            </a>
-                        </li>
-                        
-                        <li><hr class="dropdown-divider"></li>
-
-                        <li>
-                          <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/asignacion.php">
-                             Asignación de Materias
-                         </a>
-                        </li>
-
-                        <li>
-                           <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudasignaciones.php">
-                              Consultar Asignaciones
-                           </a>
-                        </li>
-                        
-                        <li><hr class="dropdown-divider"></li>
-
-                        <li>
-                          <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/calificaciones.php">
-                             Captura de Calificaciones
-                         </a>
-                         <a class="dropdown-item"
-                              href="/escuelaitg/escuelaitg-4t1/registro/calificaciones_masivas.php">
-                             Captura Masiva de Calificaciones
-                         </a>
-                       </li>
-
-                        <li>
-                          <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudcalificaciones.php">
-                             Consultar Calificaciones
-                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudalumnos.php">Alumnos</a></li>
+                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudgrupos.php">Grupos</a></li>
+                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudmaterias.php">Materias</a></li>
+                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudprofesores.php">Profesores</a></li>
+                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudunidad.php">Unidades</a></li>
+                        </ul>
                     </li>
+                <?php } ?>
 
+                <!-- PROCESOS: Visible para Administrador (1) y Profesor (2) -->
+                <?php if ($rol == 1 || $rol == 2) { ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Procesos
+                        </a>
 
-                    </ul>
-                </li>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/proceso/index.php">
+                                    Registro de datos
+                                </a>
+                            </li>
 
-                <!-- REPORTES -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Reportes
-                    </a>
+                            <li><hr class="dropdown-divider"></li>
 
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/reportes/index.php">
-                                Consultar reportes
-                            </a>
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/inscripcion.php">
+                                    Inscripción a Grupos
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudinscripciones.php">
+                                    Consultar Inscripciones
+                                </a>
+                            </li>
                             
-                            <a class="dropdown-item"
-                               href="/escuelaitg/escuelaitg-4t1/reportes/reporte_calificaciones.php">
-                               Reporte de Calificaciones
-                            </a>
+                            <li><hr class="dropdown-divider"></li>
 
-                        </li>
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/asignacion.php">
+                                   Asignación de Materias
+                                </a>
+                            </li>
 
-                        <li><hr class="dropdown-divider"></li>
-
-                        <li>
-                            <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/reportes/reporte_unidades.php">
-                                Reporte de Unidades
-                            </a>
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudasignaciones.php">
+                                    Consultar Asignaciones
+                                </a>
+                            </li>
                             
-                            <a class="dropdown-item"
-                              href="/escuelaitg/escuelaitg-4t1/reportes/reporte_calificaciones.php">
-                              Reporte de Calificaciones
-                            </a>
+                            <li><hr class="dropdown-divider"></li>
 
-                        </li>
-                    </ul>
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/calificaciones.php">
+                                   Captura de Calificaciones
+                                </a>
+                                <a class="dropdown-item"
+                                    href="/escuelaitg/escuelaitg-4t1/registro/calificaciones_masivas.php">
+                                   Captura Masiva de Calificaciones
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudcalificaciones.php">
+                                   Consultar Calificaciones
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php } ?>
+
+                <!-- REPORTES: Visible para Administrador (1) y Profesor (2) -->
+                <?php if ($rol == 1 || $rol == 2) { ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Reportes
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/reportes/index.php">
+                                    Consultar reportes
+                                </a>
+                                
+                                <a class="dropdown-item"
+                                    href="/escuelaitg/escuelaitg-4t1/reportes/reporte_calificaciones.php">
+                                   Reporte de Calificaciones
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/reportes/reporte_unidades.php">
+                                    Reporte de Unidades
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php } ?>
+
+                <!-- VISTA ALUMNO (3): Opción exclusiva para alumnos -->
+                <?php if ($rol == 3) { ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/escuelaitg/escuelaitg-4t1/reportes/reporte_calificaciones.php">Mis Calificaciones</a>
+                    </li>
+                <?php } ?>
+
+                <!-- BOTÓN SALIR -->
+                <li class="nav-item">
+                    <a class="nav-link text-warning fw-bold" href="/escuelaitg/escuelaitg-4t1/logout.php">Cerrar Sesión</a>
                 </li>
 
             </ul>

@@ -1,4 +1,11 @@
 <?php
+// Si el usuario dio clic en exportar, configuramos las cabeceras para Excel
+if (isset($_GET['exportar']) && $_GET['exportar'] == 'excel') {
+    header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+    header("Content-Disposition: attachment; filename=reporte_materias_" . date('Y-m-d') . ".xls");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+}
 
 include("../conexion.php");
 
@@ -12,9 +19,11 @@ if (!$resultado) {
 
 $materias = $resultado->fetch_all(MYSQLI_ASSOC);
 
-include("../navegacion/header.php");
-include("../navegacion/navegacion.php");
-
+// Si NO se está exportando, cargamos la interfaz visual con su menú
+if (!isset($_GET['exportar'])) {
+    include("../navegacion/header.php");
+    include("../navegacion/navegacion.php");
+}
 ?>
 
 <div class="container mt-5">
@@ -27,26 +36,28 @@ include("../navegacion/navegacion.php");
         Lista de materias registradas en el Sistema Escolar.
     </p>
 
-    <div class="mb-3">
+    <!-- Botones de acción (se ocultan al exportar) -->
+    <?php if (!isset($_GET['exportar'])) { ?>
+        <div class="mb-3">
+            <a href="reporte_materias.php?exportar=excel" class="btn btn-success">
+                📊 Exportar a Excel
+            </a>
 
-        <button onclick="window.print()" class="btn btn-primary">
-            Imprimir reporte
-        </button>
+            <a href="index.php" class="btn btn-secondary">
+                Regresar
+            </a>
+        </div>
 
-        <a href="index.php" class="btn btn-secondary">
-            Regresar
-        </a>
-
-    </div>
-
-    <div class="mb-3">
-        <strong>Total de materias:</strong>
-        <?php echo count($materias); ?>
-    </div>
+        <div class="mb-3">
+            <strong>Total de materias:</strong>
+            <?php echo count($materias); ?>
+        </div>
+    <?php } ?>
 
     <div class="table-responsive">
 
-        <table class="table table-bordered table-hover">
+        <!-- Agregamos border="1" para que Excel reconozca el mallado de celdas -->
+        <table class="table table-bordered table-hover" border="1">
 
             <thead class="table-dark">
                 <tr>
@@ -102,9 +113,9 @@ include("../navegacion/navegacion.php");
 }
 </style>
 
-<?php
-
-include("../navegacion/footer.php");
-
+<?php 
+// Si no se está exportando, cargamos el footer normal
+if (!isset($_GET['exportar'])) {
+    include("../navegacion/footer.php");
+}
 ?>
-```
