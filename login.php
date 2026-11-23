@@ -6,22 +6,23 @@ $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $conexion->real_escape_string($_POST['usuario']);
-    $password = md5($_POST['pw']); // Encriptando en MD5 como indicó el profe
+    $identificador = $conexion->real_escape_string($_POST['identificador']);
+    $password = md5($_POST['pw']);
 
-    $sql = "SELECT * FROM usuarios WHERE nombreuser = '$usuario' AND pwuser = '$password' AND status_user = 'ACTA'";
+    // Validamos nombre, identificador y contraseña encriptada
+    $sql = "SELECT * FROM usuarios WHERE nombreuser = '$usuario' AND identificador = '$identificador' AND pwuser = '$password' AND status_user = 'ACTA'";
     $resultado = $conexion->query($sql);
 
     if ($resultado->num_rows == 1) {
-    $row = $resultado->fetch_assoc();
-    $_SESSION['usuario'] = $row['nombreuser'];
-    $_SESSION['puesto'] = $row['puesto']; // <-- AQUÍ GUARDAMOS EL ROL (1, 2 o 3)
-    }
-    
-    header("Location: index.php");
-    exit();
+        $row = $resultado->fetch_assoc();
+        $_SESSION['usuario'] = $row['nombreuser'];
+        $_SESSION['puesto'] = $row['puesto'];
+        header("Location: index.php");
+        exit();
     } else {
-        $error = "Usuario o contraseña incorrectos.";
+        $error = "Datos incorrectos (Verifica usuario, ID/No. Control o contraseña).";
     }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -31,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow p-4" style="width: 350px;">
+    <div class="card shadow p-4" style="width: 380px;">
         <h3 class="text-center text-secondary mb-3">Iniciar Sesión</h3>
         <?php if (!empty($error)) { ?>
             <div class="alert alert-danger p-2 text-center small"><?php echo $error; ?></div>
@@ -40,6 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mb-3">
                 <label class="form-label">Usuario</label>
                 <input type="text" name="usuario" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">ID Admin / No. Control</label>
+                <input type="text" name="identificador" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Contraseña</label>

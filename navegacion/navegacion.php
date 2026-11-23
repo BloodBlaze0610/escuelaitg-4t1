@@ -4,177 +4,318 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 $rol = $_SESSION['puesto'] ?? 0;
+$nombre_usuario = $_SESSION['usuario'] ?? 'Usuario';
+$pagina_actual = basename($_SERVER['PHP_SELF']);
+$ruta_actual = $_SERVER['PHP_SELF'] ?? '';
+
+$etiqueta_rol = match ((int)$rol) {
+    1 => 'Administrador',
+    2 => 'Profesor',
+    3 => 'Alumno',
+    default => 'Invitado',
+};
 ?>
 
+<!-- ESTILOS DEL SIDEBAR INSTITUCIONAL -->
 <style>
-    .dropdown-menu .dropdown-item {
+    .sidebar-institucional {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 260px;
+        background-color: #161a1d;
+        color: #adb5bd;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        z-index: 1000;
+        box-shadow: 4px 0 18px rgba(0, 0, 0, 0.14);
+        border-right: 1px solid #282d32;
+        font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    .sidebar-brand {
+        padding: 20px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid #282d32;
+        background-color: #111416;
+        text-decoration: none;
+    }
+
+    .sidebar-brand img {
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
+        border-radius: 6px;
+        background-color: #ffffff;
+        padding: 2px;
+        flex-shrink: 0;
+    }
+
+    .brand-text h5 {
+        color: #ffffff;
+        font-size: 0.98rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin: 0;
+    }
+
+    .brand-text small {
+        color: #adb5bd;
+        font-size: 0.75rem;
+        display: block;
+    }
+
+    .sidebar-session-badge {
+        margin: 14px 14px 4px 14px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background-color: #1c1e21;
+        border: 1px solid #282d32;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .sidebar-session-name {
+        color: #ffffff;
+        font-size: 0.84rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sidebar-session-role {
+        font-size: 0.7rem;
+        color: #adb5bd;
+        background-color: #282d32;
+        padding: 2px 8px;
+        border-radius: 999px;
+        flex-shrink: 0;
+    }
+
+    .sidebar-menu {
+        padding: 12px 10px;
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    .sidebar-menu .nav-link {
+        color: #adb5bd;
         padding: 9px 14px;
-        margin: 2px 0;
-        border-radius: 5px;
-        transition: background-color 0.2s, color 0.2s;
+        border-radius: 7px;
+        margin-bottom: 4px;
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s ease;
+        text-decoration: none;
     }
 
-    .dropdown-menu .dropdown-item:hover {
-        background-color: #4285d4;
-        color: white;
+    .sidebar-menu .nav-link-left {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .dropdown-menu .dropdown-item:active {
-        background-color: #3267a8;
-        color: white;
+    .sidebar-menu .nav-link:hover,
+    .sidebar-menu .nav-link.active {
+        background-color: #1c1e21;
+        color: #ffffff;
+        box-shadow: inset 3px 0 0 #ffffff;
     }
 
-    .dropdown-divider {
-        margin: 5px 8px;
+    .sidebar-menu .submenu {
+        padding-left: 14px;
+        list-style: none;
+        margin-top: 4px;
+        margin-bottom: 6px;
+    }
+
+    .sidebar-menu .submenu .nav-link {
+        font-size: 0.85rem;
+        padding: 7px 12px;
+    }
+
+    .sidebar-section-title {
+        color: #6c757d;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        padding: 0 14px;
+        margin-top: 16px;
+        margin-bottom: 6px;
+    }
+
+    .sidebar-footer {
+        padding: 14px 16px;
+        border-top: 1px solid #282d32;
+        background-color: #111416;
+    }
+
+    .sidebar-logout-btn {
+        color: #f8d7da;
+        background-color: rgba(220, 53, 69, 0.12);
+        border: 1px solid rgba(220, 53, 69, 0.28);
+        border-radius: 7px;
+        padding: 9px 12px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-logout-btn:hover {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #ffffff;
+    }
+
+    /* Ajuste para el contenido principal cuando el sidebar está fijo */
+    .main-content-wrapper {
+        margin-left: 260px;
+        background-color: #f4f5f7;
+        min-height: 100vh;
+    }
+
+    @media (max-width: 992px) {
+        .sidebar-institucional {
+            width: 72px;
+        }
+        .sidebar-brand .brand-text,
+        .sidebar-session-badge,
+        .sidebar-section-title,
+        .sidebar-menu .nav-label,
+        .sidebar-logout-label,
+        .menu-arrow {
+            display: none;
+        }
+        .sidebar-menu .nav-link {
+            justify-content: center;
+            padding: 10px;
+        }
+        .sidebar-logout-btn {
+            padding: 10px;
+        }
+        .main-content-wrapper {
+            margin-left: 72px;
+        }
     }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #4285d4;">
-    <div class="container-fluid">
-
-        <a class="navbar-brand" href="/escuelaitg/escuelaitg-4t1/index.php">
-            Sistema Escolar
+<aside class="sidebar-institucional" aria-label="Navegación principal del sistema">
+    <div>
+        <!-- LOGO / ESCUDO DESDE LA RAÍZ -->
+        <a href="/escuelaitg/escuelaitg-4t1/index.php" class="sidebar-brand">
+            <img src="/escuelaitg/escuelaitg-4t1/Emblema institucional ITGAM II.jpg" alt="Escudo ITGAM II">
+            <div class="brand-text">
+                <h5>SAEIGH • ITGAM II</h5>
+                <small>Sistema Escolar</small>
+            </div>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#menuPrincipal" aria-controls="menuPrincipal"
-            aria-expanded="false" aria-label="Abrir menú">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="menuPrincipal">
-
-            <ul class="navbar-nav ms-auto">
-
-                <!-- CATÁLOGOS: Solo visible para Administrador (1) -->
-                <?php if ($rol == 1) { ?>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Catálogos
-                        </a>
-
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudalumnos.php">Alumnos</a></li>
-                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudgrupos.php">Grupos</a></li>
-                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudmaterias.php">Materias</a></li>
-                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudprofesores.php">Profesores</a></li>
-                            <li><a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudunidad.php">Unidades</a></li>
-                        </ul>
-                    </li>
-                <?php } ?>
-
-                <!-- PROCESOS: Visible para Administrador (1) y Profesor (2) -->
-                <?php if ($rol == 1 || $rol == 2) { ?>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Procesos
-                        </a>
-
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/proceso/index.php">
-                                    Registro de datos
-                                </a>
-                            </li>
-
-                            <li><hr class="dropdown-divider"></li>
-
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/inscripcion.php">
-                                    Inscripción a Grupos
-                                </a>
-                            </li>
-
-                            <li><hr class="dropdown-divider"></li>
-
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudinscripciones.php">
-                                    Consultar Inscripciones
-                                </a>
-                            </li>
-                            
-                            <li><hr class="dropdown-divider"></li>
-
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/asignacion.php">
-                                   Asignación de Materias
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudasignaciones.php">
-                                    Consultar Asignaciones
-                                </a>
-                            </li>
-                            
-                            <li><hr class="dropdown-divider"></li>
-
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/registro/calificaciones.php">
-                                   Captura de Calificaciones
-                                </a>
-                                <a class="dropdown-item"
-                                    href="/escuelaitg/escuelaitg-4t1/registro/calificaciones_masivas.php">
-                                   Captura Masiva de Calificaciones
-                                </a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudcalificaciones.php">
-                                   Consultar Calificaciones
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                <?php } ?>
-
-                <!-- REPORTES: Visible para Administrador (1) y Profesor (2) -->
-                <?php if ($rol == 1 || $rol == 2) { ?>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Reportes
-                        </a>
-
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/reportes/index.php">
-                                    Consultar reportes
-                                </a>
-                                
-                                <a class="dropdown-item"
-                                    href="/escuelaitg/escuelaitg-4t1/reportes/reporte_calificaciones.php">
-                                   Reporte de Calificaciones
-                                </a>
-                            </li>
-
-                            <li><hr class="dropdown-divider"></li>
-
-                            <li>
-                                <a class="dropdown-item" href="/escuelaitg/escuelaitg-4t1/reportes/reporte_unidades.php">
-                                    Reporte de Unidades
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                <?php } ?>
-
-                <!-- VISTA ALUMNO (3): Opción exclusiva para alumnos -->
-                <?php if ($rol == 3) { ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/escuelaitg/escuelaitg-4t1/reportes/reporte_calificaciones.php">Mis Calificaciones</a>
-                    </li>
-                <?php } ?>
-
-                <!-- BOTÓN SALIR -->
-                <li class="nav-item">
-                    <a class="nav-link text-warning fw-bold" href="/escuelaitg/escuelaitg-4t1/logout.php">Cerrar Sesión</a>
-                </li>
-
-            </ul>
-
+        <!-- USUARIO Y ROL ACTIVO -->
+        <div class="sidebar-session-badge">
+            <span class="sidebar-session-name" title="<?php echo htmlspecialchars($nombre_usuario); ?>">
+                <i class="bi bi-person-check-fill me-1 text-secondary"></i><?php echo htmlspecialchars($nombre_usuario); ?>
+            </span>
+            <span class="sidebar-session-role"><?php echo htmlspecialchars($etiqueta_rol); ?></span>
         </div>
+
+        <!-- MENÚ DE NAVEGACIÓN LATERAL -->
+        <nav class="sidebar-menu">
+            <a href="/escuelaitg/escuelaitg-4t1/index.php" class="nav-link <?php echo ($pagina_actual == 'index.php' && strpos($ruta_actual, '/proceso/') === false && strpos($ruta_actual, '/reportes/') === false) ? 'active' : ''; ?>">
+                <span class="nav-link-left">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span class="nav-label">Inicio</span>
+                </span>
+            </a>
+
+            <?php if ($rol == 1) { ?>
+                <div class="sidebar-section-title">Administración</div>
+
+                <a href="#catSubmenu" data-bs-toggle="collapse" aria-expanded="true" class="nav-link">
+                    <span class="nav-link-left">
+                        <i class="bi bi-folder2-open"></i>
+                        <span class="nav-label">Catálogos</span>
+                    </span>
+                    <i class="bi bi-chevron-down menu-arrow small"></i>
+                </a>
+                <div class="collapse show" id="catSubmenu">
+                    <ul class="submenu">
+                        <li>
+                            <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudalumnos.php" class="nav-link <?php echo ($pagina_actual == 'crudalumnos.php') ? 'active' : ''; ?>">
+                                <span class="nav-link-left"><i class="bi bi-people"></i><span class="nav-label">Alumnos</span></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudgrupos.php" class="nav-link <?php echo ($pagina_actual == 'crudgrupos.php') ? 'active' : ''; ?>">
+                                <span class="nav-link-left"><i class="bi bi-collection"></i><span class="nav-label">Grupos</span></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudmaterias.php" class="nav-link <?php echo ($pagina_actual == 'crudmaterias.php') ? 'active' : ''; ?>">
+                                <span class="nav-link-left"><i class="bi bi-book"></i><span class="nav-label">Materias</span></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudprofesores.php" class="nav-link <?php echo ($pagina_actual == 'crudprofesores.php') ? 'active' : ''; ?>">
+                                <span class="nav-link-left"><i class="bi bi-person-badge"></i><span class="nav-label">Profesores</span></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudunidad.php" class="nav-link <?php echo ($pagina_actual == 'crudunidad.php') ? 'active' : ''; ?>">
+                                <span class="nav-link-left"><i class="bi bi-layers"></i><span class="nav-label">Unidades</span></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            <?php } ?>
+
+            <?php if ($rol == 1 || $rol == 2) { ?>
+                <div class="sidebar-section-title">Gestión Académica</div>
+                <a href="/escuelaitg/escuelaitg-4t1/proceso/index.php" class="nav-link <?php echo (strpos($ruta_actual, '/proceso/') !== false) ? 'active' : ''; ?>">
+                    <span class="nav-link-left"><i class="bi bi-gear-wide-connected"></i><span class="nav-label">Procesos</span></span>
+                </a>
+                <a href="/escuelaitg/escuelaitg-4t1/reportes/index.php" class="nav-link <?php echo (strpos($ruta_actual, '/reportes/') !== false) ? 'active' : ''; ?>">
+                    <span class="nav-link-left"><i class="bi bi-bar-chart-line-fill"></i><span class="nav-label">Reportes</span></span>
+                </a>
+                <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudinscripciones.php" class="nav-link <?php echo ($pagina_actual == 'crudinscripciones.php') ? 'active' : ''; ?>">
+                    <span class="nav-link-left"><i class="bi bi-journal-check"></i><span class="nav-label">Inscripciones</span></span>
+                </a>
+                <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudasignaciones.php" class="nav-link <?php echo ($pagina_actual == 'crudasignaciones.php') ? 'active' : ''; ?>">
+                    <span class="nav-link-left"><i class="bi bi-link-45deg"></i><span class="nav-label">Asignaciones</span></span>
+                </a>
+                <a href="/escuelaitg/escuelaitg-4t1/catalogos/crud/crudcalificaciones.php" class="nav-link <?php echo ($pagina_actual == 'crudcalificaciones.php') ? 'active' : ''; ?>">
+                    <span class="nav-link-left"><i class="bi bi-star-fill"></i><span class="nav-label">Calificaciones</span></span>
+                </a>
+            <?php } ?>
+
+            <?php if ($rol == 3) { ?>
+                <div class="sidebar-section-title">Alumno</div>
+                <a href="/escuelaitg/escuelaitg-4t1/reportes/reporte_calificaciones.php" class="nav-link <?php echo ($pagina_actual == 'reporte_calificaciones.php') ? 'active' : ''; ?>">
+                    <span class="nav-link-left"><i class="bi bi-star-fill"></i><span class="nav-label">Mis Calificaciones</span></span>
+                </a>
+            <?php } ?>
+        </nav>
     </div>
-</nav>
+
+    <!-- FOOTER / CERRAR SESIÓN -->
+    <div class="sidebar-footer">
+        <a href="/escuelaitg/escuelaitg-4t1/logout.php" class="sidebar-logout-btn" title="Cerrar sesión">
+            <i class="bi bi-box-arrow-right"></i>
+            <span class="sidebar-logout-label">Cerrar Sesión</span>
+        </a>
+    </div>
+</aside>

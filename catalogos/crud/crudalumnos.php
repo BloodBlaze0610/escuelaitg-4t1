@@ -1,4 +1,4 @@
-<<?php
+<?php
 session_start();
 // Si no es Administrador (puesto 1), lo mandamos directo al inicio o login
 if (!isset($_SESSION['puesto']) || $_SESSION['puesto'] != 1) {
@@ -19,43 +19,153 @@ if (!$resultado) {
 
 // 3. Guardamos los resultados en un arreglo asociativo para usarlo en el foreach
 $alumnos = $resultado->fetch_all(MYSQLI_ASSOC);
+$total_alumnos = count($alumnos);
+$nombre_usuario = $_SESSION['usuario'] ?? 'Israel';
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Catálogo de Alumnos</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
+    <title>Catálogo de Alumnos - Sistema Escolar ITGAM II</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
-            background-color: #f5f6f8;
+            background-color: #f4f5f7;
+            font-family: system-ui, -apple-system, sans-serif;
+            color: #1c1e21;
+            margin: 0;
         }
 
-        .encabezado {
-            background-color: white;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
+        /* HEADER SUPERIOR INSTITUCIONAL */
+        .top-header {
+            background: linear-gradient(135deg, #1c1e21 0%, #2c3034 100%);
+            color: #ffffff;
+            padding: 25px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #343a40;
         }
 
-        .contenido {
-            margin-top: 30px;
-            margin-bottom: 30px;
+        .top-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
         }
 
-        .tabla-contenedor {
-            background-color: white;
-            padding: 20px;
+        .top-header p {
+            color: #adb5bd;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background-color: #495057;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .contenido-area {
+            padding: 35px;
+        }
+
+        /* CABECERA DE SECCIÓN CON ICONO GRANDE */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title-group {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .icon-box-dark {
+            width: 64px;
+            height: 64px;
+            background-color: #1c1e21;
+            color: #ffffff;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .titulo-texto h3 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #1c1e21;
+            margin: 0;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .titulo-texto p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 6px 0 0 0;
+        }
+
+        .btn-institucional {
+            background-color: #1c1e21;
+            color: #ffffff;
+            border: none;
+            padding: 11px 22px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-institucional:hover {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        /* TARJETA CONTENEDORA DE TABLA */
+        .tabla-contenedor {
+            background-color: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            padding: 22px;
+        }
+
+        .table-wrapper-rounded {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
         }
 
         .table {
@@ -63,162 +173,246 @@ $alumnos = $resultado->fetch_all(MYSQLI_ASSOC);
             vertical-align: middle;
         }
 
-        .table th,
-        .table td {
+        .table thead th {
+            background-color: #1c1e21;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 14px 16px;
+            border: none;
             white-space: nowrap;
         }
 
-        .titulo {
-            color: #555;
-            margin-bottom: 20px;
+        .table tbody td {
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            color: #212529;
+            border-bottom: 1px solid #f1f3f5;
+            white-space: nowrap;
         }
 
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* BOTONES CUADRADOS MINIMALISTAS */
         .acciones {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             align-items: center;
         }
-    </style>
 
+        .btn-icon-edit {
+            width: 34px;
+            height: 34px;
+            background-color: #1c1e21;
+            color: #ffffff;
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-icon-edit:hover {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        .btn-icon-delete {
+            width: 34px;
+            height: 34px;
+            background-color: #e9ecef;
+            color: #495057;
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-icon-delete:hover {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
+
+        /* BARRA INFERIOR DE CONTEO */
+        .table-footer-bar {
+            background-color: #f4f5f7;
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .footer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: #343a40;
+        }
+
+        .pagination-mock {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-btn-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e2e6ea;
+            color: #6c757d;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .page-btn-active {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background-color: #1c1e21;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- ENCABEZADO -->
-    <div class="encabezado">
-        <h4 class="text-secondary mb-0">
-            Sistema Escolar
-        </h4>
-    </div>
-
-    <!-- BARRA DE NAVEGACIÓN -->
+    <!-- BARRA DE NAVEGACIÓN LATERAL (SIDEBAR) -->
     <?php include("../../navegacion/navegacion.php"); ?>
 
-    <!-- CONTENIDO -->
-    <div class="container-fluid contenido px-3 px-md-4">
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="main-content-wrapper">
 
-        <h3 class="text-center titulo">
-            Catálogo de Alumnos
-        </h3>
-
-        <div class="d-flex justify-content-end mb-3">
-
-            <a href="../../registro/alumnos.php"
-               class="btn btn-success">
-                + Registrar Alumno
-            </a>
-
+        <!-- ENCABEZADO SUPERIOR -->
+        <div class="top-header">
+            <div>
+                <h2>Sistema Escolar Institucional</h2>
+                <p>Tecnológico Nacional de México – ITGAM II</p>
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #adb5bd;">Bienvenido(a)</div>
+                    <div style="font-size: 0.9rem; font-weight: 600;"><?php echo htmlspecialchars($nombre_usuario); ?></div>
+                </div>
+            </div>
         </div>
 
-        <div class="tabla-contenedor">
+        <!-- ÁREA DE CONTENIDO -->
+        <div class="contenido-area">
 
-            <div class="table-responsive">
+            <!-- TÍTULO CON ICONO GRANDE Y BOTÓN REGISTRAR -->
+            <div class="section-header">
+                <div class="section-title-group">
+                    <div class="icon-box-dark">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div class="titulo-texto">
+                        <h3>Catálogo de Alumnos</h3>
+                        <p>Consulta, registra y administra la información de los alumnos.</p>
+                    </div>
+                </div>
 
-                <table class="table table-bordered table-hover">
+                <a href="../../registro/alumnos.php" class="btn-institucional">
+                    <i class="bi bi-plus-lg"></i> Registrar Alumno
+                </a>
+            </div>
 
-                    <thead class="table-dark">
-
-                        <tr>
-                            <th>#</th>
-                            <th>Matrícula</th>
-                            <th>Nombre</th>
-                            <th>Apellido paterno</th>
-                            <th>Apellido materno</th>
-                            <th>Domicilio</th>
-                            <th>Email</th>
-                            <th>Teléfono</th>
-                            <th>Acciones</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <?php foreach ($alumnos as $indice => $alumno) { ?>
-
+            <!-- CONTENEDOR DE TABLA -->
+            <div class="tabla-contenedor">
+                <div class="table-responsive table-wrapper-rounded">
+                    <table class="table table-hover align-middle">
+                        <thead>
                             <tr>
-
-                                <td>
-                                    <?php echo $indice + 1; ?>
-                                </td>
-
-                                <td>
-                                    <?php echo htmlspecialchars($alumno["matricula_al"] ?? ""); ?>
-                                </td>
-
-                                <td>
-                                    <?php echo htmlspecialchars($alumno["nombre_al"] ?? ""); ?>
-                                </td>
-
-                                <td>
-                                    <?php echo htmlspecialchars($alumno["apaterno_al"] ?? ""); ?>
-                                </td>
-
-                                <td>
-                                    <?php echo htmlspecialchars($alumno["amaterno_al"] ?? ""); ?>
-                                </td>
-
-                                <td>
-                                    <?php echo htmlspecialchars($alumno["dom_al"] ?? ""); ?>
-                                </td>
-
-                                <td>
-                                    <?php echo htmlspecialchars($alumno["mail_al"] ?? ""); ?>
-                                </td>
-
-                                <td>
-                                    <?php echo htmlspecialchars($alumno["tel_al"] ?? ""); ?>
-                                </td>
-
-                                <td>
-
-                                    <div class="acciones">
-
-                                        <a href="../../registro/alumnos.php"
-                                           class="btn btn-dark btn-sm">
-                                            +
-                                        </a>
-
-                                        <a href="../../modificacion/modif_alumnos.php?fila=<?php echo urlencode($indice); ?>"
-                                           class="btn btn-primary btn-sm">
-                                            Editar
-                                        </a>
-
-                                        <a href="../../baja/baja_alumnos.php?fila=<?php echo urlencode($indice); ?>"
-                                           class="btn btn-danger btn-sm">
-                                            Baja
-                                        </a>
-
-                                    </div>
-
-                                </td>
-
+                                <th>#</th>
+                                <th>Matrícula</th>
+                                <th>Nombre</th>
+                                <th>Apellido Paterno</th>
+                                <th>Apellido Materno</th>
+                                <th>Domicilio</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
                             </tr>
+                        </thead>
 
-                        <?php } ?>
+                        <tbody>
+                            <?php foreach ($alumnos as $indice => $alumno) { ?>
+                                <tr>
+                                    <td class="fw-bold text-dark"><?php echo $indice + 1; ?></td>
+                                    <td><?php echo htmlspecialchars($alumno["matricula_al"] ?? ""); ?></td>
+                                    <td><?php echo htmlspecialchars($alumno["nombre_al"] ?? ""); ?></td>
+                                    <td><?php echo htmlspecialchars($alumno["apaterno_al"] ?? ""); ?></td>
+                                    <td><?php echo htmlspecialchars($alumno["amaterno_al"] ?? ""); ?></td>
+                                    <td><?php echo htmlspecialchars($alumno["dom_al"] ?? ""); ?></td>
+                                    <td><?php echo htmlspecialchars($alumno["mail_al"] ?? ""); ?></td>
+                                    <td><?php echo htmlspecialchars($alumno["tel_al"] ?? ""); ?></td>
+                                    <td>
+                                        <div class="acciones">
+                                            <a href="../../modificacion/modif_alumnos.php?fila=<?php echo urlencode($indice); ?>" class="btn-icon-edit" title="Editar alumno">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <a href="../../baja/baja_alumnos.php?fila=<?php echo urlencode($indice); ?>" class="btn-icon-delete" title="Dar de baja">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php } ?>
 
-                        <?php if (count($alumnos) == 0) { ?>
+                            <?php if ($total_alumnos == 0) { ?>
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        No hay alumnos registrados en el sistema.
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
 
-                            <tr>
-                                <td colspan="9" class="text-center">
-                                    No hay alumnos registrados.
-                                </td>
-                            </tr>
-
-                        <?php } ?>
-
-                    </tbody>
-
-                </table>
-
+                <!-- BARRA INFERIOR DE REGISTROS -->
+                <div class="table-footer-bar">
+                    <div class="footer-info">
+                        <i class="bi bi-info-circle-fill fs-5 text-dark"></i>
+                        <span>Mostrando <strong><?php echo $total_alumnos; ?></strong> registros</span>
+                    </div>
+                    <div class="pagination-mock">
+                        <span class="page-btn-circle"><i class="bi bi-chevron-left"></i></span>
+                        <span class="page-btn-active">1</span>
+                        <span class="page-btn-circle"><i class="bi bi-chevron-right"></i></span>
+                    </div>
+                </div>
             </div>
 
         </div>
 
     </div>
 
-    <!-- SCRIPT DE BOOTSTRAP PARA ACTIVAR LOS MENÚS DESPLEGABLES -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
+
+<?php
+if (isset($conexion) && $conexion) {
+    $conexion->close();
+}
+?>

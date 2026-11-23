@@ -1,106 +1,158 @@
 <?php
+session_start();
+// Validamos control de acceso (Solo Administrador o Profesor)
+if (!isset($_SESSION['puesto']) || ($_SESSION['puesto'] != 1 && $_SESSION['puesto'] != 2)) {
+    header("Location: ../index.php");
+    exit();
+}
 
 include("../conexion.php");
 
-$descripcion = $_GET["descripcion"];
-
+$descripcion = isset($_GET["descripcion"]) ? $_GET["descripcion"] : "";
+$nombre_usuario = $_SESSION['usuario'] ?? 'Usuario';
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baja de Grupo - Sistema Escolar ITGAM II</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f5f7;
+            font-family: system-ui, -apple-system, sans-serif;
+            color: #212529;
+            margin: 0;
+        }
 
-    <title>Baja de Grupo</title>
+        /* HEADER SUPERIOR INSTITUCIONAL */
+        .top-header {
+            background: linear-gradient(135deg, #1c1e21 0%, #2c3034 100%);
+            color: #ffffff;
+            padding: 25px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #343a40;
+        }
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+        .top-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
 
+        .top-header p {
+            color: #adb5bd;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background-color: #495057;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .contenido-area {
+            padding: 35px;
+        }
+
+        .card-baja {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            max-width: 600px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            background-color: #1c1e21;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-    <div class="container-fluid bg-white text-center py-3">
+    <!-- BARRA DE NAVEGACIÓN LATERAL (SIDEBAR) -->
+    <?php include("../navegacion/navegacion.php"); ?>
 
-        <h4 class="text-secondary">
-            Sistema Escolar
-        </h4>
+    <!-- CONTENEDOR PRINCIPAL QUE RESPETA EL MARGEN DEL SIDEBAR -->
+    <div class="main-content-wrapper">
 
-    </div>
-
-
-    <nav class="navbar navbar-expand-lg navbar-dark"
-         style="background-color: #4285d4;">
-
-        <div class="container-fluid">
-
-            <a class="navbar-brand" href="#">
-                Navbar
-            </a>
-
-            <div class="navbar-nav">
-
-                <a class="nav-link active"
-                   href="../catalogos/crud/crudgrupos.php">
-                    Catálogos
-                </a>
-
-                <a class="nav-link" href="#">
-                    Procesos
-                </a>
-
-                <a class="nav-link" href="#">
-                    Reportes
-                </a>
-
+        <!-- ENCABEZADO SUPERIOR -->
+        <div class="top-header">
+            <div>
+                <h2>Sistema Escolar Institucional</h2>
+                <p>Tecnológico Nacional de México – ITGAM II</p>
             </div>
-
+            <div class="user-profile">
+                <div class="user-avatar">👤</div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #adb5bd;">Bienvenido(a)</div>
+                    <div style="font-size: 0.9rem; font-weight: 600;"><?php echo htmlspecialchars($nombre_usuario); ?></div>
+                </div>
+            </div>
         </div>
 
-    </nav>
+        <!-- ÁREA DE CONTENIDO -->
+        <div class="contenido-area">
 
+            <div class="card card-baja">
+                
+                <div class="card-header-custom">
+                    <h4 class="mb-0 fs-5">Confirmación de Baja de Grupo</h4>
+                </div>
 
-    <div class="container mt-5">
+                <div class="card-body text-center p-4 p-md-5">
 
-        <div class="card">
+                    <div class="alert alert-warning mb-4 border-0 shadow-sm" role="alert" style="background-color: #fff3cd; color: #856404;">
+                        <strong>¡Atención!</strong> ¿Estás seguro de que deseas eliminar permanentemente el siguiente grupo del sistema institucional?
+                    </div>
 
-            <div class="card-body text-center">
+                    <h3 class="text-dark fw-bold mb-4 p-3 bg-light rounded border">
+                        <?php echo htmlspecialchars($descripcion); ?>
+                    </h3>
 
-                <h4 class="text-danger mb-4">
-                    Baja de Grupo
-                </h4>
+                    <form action="confirmar_baja_grupo.php" method="POST" class="d-flex justify-content-center gap-3 pt-3 border-top">
+                        <input type="hidden" name="descripcion" value="<?php echo htmlspecialchars($descripcion); ?>">
 
-                <p>
-                    ¿Estás seguro de que deseas eliminar el grupo:
-                </p>
+                        <button type="submit" class="btn btn-danger px-4 fw-semibold">
+                            Sí, dar de baja
+                        </button>
 
-                <h5>
-                    <?php echo htmlspecialchars($descripcion); ?>
-                </h5>
+                        <a href="../catalogos/crud/crudgrupos.php" class="btn btn-outline-secondary px-4 fw-semibold">
+                            Cancelar
+                        </a>
+                    </form>
 
-
-                <form action="confirmar_baja_grupo.php" method="POST">
-
-                    <input type="hidden"
-                           name="descripcion"
-                           value="<?php echo htmlspecialchars($descripcion); ?>">
-
-
-                    <button type="submit"
-                            class="btn btn-danger">
-                        Sí, dar de baja
-                    </button>
-
-
-                    <a href="../catalogos/crud/crudgrupos.php"
-                       class="btn btn-secondary">
-                        Cancelar
-                    </a>
-
-                </form>
+                </div>
 
             </div>
 
@@ -108,6 +160,8 @@ $descripcion = $_GET["descripcion"];
 
     </div>
 
+    <!-- SCRIPT DE BOOTSTRAP -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
